@@ -1,9 +1,9 @@
-from keras.models import Model
+import keras.models
 from keras.layers import *
 from keras.optimizers import *
 
 
-def model():
+def unet_model():
 
     inputs = Input((224, 224, 3))
 
@@ -51,10 +51,10 @@ def model():
     conv18 = Conv2D(64, 3, padding='same', activation='relu')(conv17)
     conv19 = Conv2D(2, 1, padding='same', activation='softmax')(conv18)
 
-    model = Model(inputs=inputs, outputs=conv19)
+    model = keras.models.Model(inputs=inputs, outputs=conv19)
 
     model.compile(optimizer=Adagrad(), loss='categorical_crossentropy', metrics=['mae', 'acc'])
 
 
 if __name__ == '__main__':
-    model()
+    unet_model()

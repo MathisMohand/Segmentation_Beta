@@ -49,11 +49,13 @@ def unet_model():
     merge4 = concatenate([conv2, up_conv4], axis=3)
     conv17 = Conv2D(64, 3, padding='same', activation='relu')(merge4)
     conv18 = Conv2D(64, 3, padding='same', activation='relu')(conv17)
-    conv19 = Conv2D(2, 1, padding='same', activation='softmax')(conv18)
+    conv19 = Conv2D(1, 1, padding='same', activation='softmax')(conv18)
 
     model = keras.models.Model(inputs=inputs, outputs=conv19)
 
-    model.compile(optimizer=Adagrad(), loss='categorical_crossentropy', metrics=['mae', 'acc'])
+    model.compile(optimizer=Adagrad(), loss='sparse_categorical_crossentropy', metrics=['mae', 'acc'])
+
+    return model
 
 
 if __name__ == '__main__':

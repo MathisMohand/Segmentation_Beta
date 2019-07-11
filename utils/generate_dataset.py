@@ -1,7 +1,7 @@
 from PIL import Image
 import numpy as np
 
-Image.MAX_IMAGE_PIXELS = 1000000000
+Image.MAX_IMAGE_PIXELS = 10000000000
 DENVER_PATH = "../denver_files/"
 TRAIN_PATH = "../images/train/"
 TEST_PATH = "../images/test/"
@@ -35,8 +35,8 @@ def create_mask(src_raster, dest_raster):
 
 
 def generate_patch(image, mask):
-    rand_x = np.random.randint(image.shape[0] - PATCH_SIZE)
-    rand_y = np.random.randint(image.shape[1] - PATCH_SIZE)
+    rand_x = np.random.randint(mask.shape[0] - PATCH_SIZE)
+    rand_y = np.random.randint(mask.shape[1] - PATCH_SIZE)
     patch = image[rand_x:rand_x + PATCH_SIZE, rand_y:rand_y + PATCH_SIZE]
     patch_mask = mask[rand_x:rand_x + PATCH_SIZE, rand_y:rand_y + PATCH_SIZE]
 

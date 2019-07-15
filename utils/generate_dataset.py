@@ -6,7 +6,9 @@ DENVER_PATH = "../denver_files/"
 TRAIN_PATH = "../images/train/"
 TEST_PATH = "../images/test/"
 VALID_PATH = "../images/valid/"
-PATCH_SIZE = 224
+X_SHIFT = -6
+Y_SHIFT = 0
+PATCH_SIZE = 256
 
 
 def load_image(path):
@@ -17,14 +19,14 @@ def load_image(path):
 
 
 def binarize_image(img):
-    bin_img = np.zeros(img.shape)
+    bin_img = np.zeros(img.shape, dtype=int)
     bin_img[img > 0] = 255
 
     return bin_img
 
 
 def save_image(img_array, path):
-    image = Image.fromarray(img_array)
+    image = Image.fromarray(img_array).convert('LA')
     image.save(path)
 
 
@@ -35,10 +37,12 @@ def create_mask(src_raster, dest_raster):
 
 
 def generate_patch(image, mask):
-    rand_x = np.random.randint(mask.shape[0] - PATCH_SIZE)
-    rand_y = np.random.randint(mask.shape[1] - PATCH_SIZE)
+
+    # 8, 20 --> Offsets due to shift between mask and image from rasterization
+    rand_x = np.random.randint(-X_SHIFT, mask.shape[0] + X_SHIFT - PATCH_SIZE)
+    rand_y = np.random.randint(Y_SHIFT, mask.shape[1] - Y_SHIFT - PATCH_SIZE)
     patch = image[rand_x:rand_x + PATCH_SIZE, rand_y:rand_y + PATCH_SIZE]
-    patch_mask = mask[rand_x:rand_x + PATCH_SIZE, rand_y:rand_y + PATCH_SIZE]
+    patch_mask = mask[rand_x + X_SHIFT:rand_x + X_SHIFT + PATCH_SIZE, rand_y - Y_SHIFT:rand_y - Y_SHIFT + PATCH_SIZE]
 
     return patch, patch_mask
 

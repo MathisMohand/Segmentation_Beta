@@ -29,6 +29,10 @@ def main():
             image_to_npy(str(i), folders[j])
             image_to_npy(str(i) + "m", folders[j])
 
+    '''for i in range(0, 19):
+        image_to_npy(str(i), "dummy/")
+        image_to_npy(str(i) + "m", "dummy/")'''
+
 
 if __name__ == '__main__':
     main()

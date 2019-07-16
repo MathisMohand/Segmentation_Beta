@@ -4,6 +4,8 @@ from PIL import Image
 
 DATA_PATH = "../data/"
 IMAGES_PATH = "../images/"
+IMG_PATH = "images/"
+MSK_PATH = "masks/"
 TIF = ".tif"
 NPY = ".npy"
 
@@ -26,12 +28,8 @@ def main():
 
     for j in range(len(folders)):
         for i in range(sizes[j], sizes[j+1]):
-            image_to_npy(str(i), folders[j])
-            image_to_npy(str(i) + "m", folders[j])
-
-    '''for i in range(0, 19):
-        image_to_npy(str(i), "dummy/")
-        image_to_npy(str(i) + "m", "dummy/")'''
+            image_to_npy(str(i), folders[j] + IMG_PATH)
+            image_to_npy(str(i) + "m", folders[j] + MSK_PATH)
 
 
 if __name__ == '__main__':

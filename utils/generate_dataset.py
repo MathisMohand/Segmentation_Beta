@@ -3,11 +3,14 @@ import numpy as np
 
 Image.MAX_IMAGE_PIXELS = 10000000000
 DENVER_PATH = "../denver_files/"
-TRAIN_PATH = "../images/train/"
-TEST_PATH = "../images/test/"
-VALID_PATH = "../images/valid/"
-X_SHIFT = -6
-Y_SHIFT = 0
+TRAIN_PATH_IMG = "../images/train/images"
+TEST_PATH_IMG = "../images/test/images/"
+VALID_PATH_IMG = "../images/valid/images/"
+TRAIN_PATH_MSK = "../images/train/masks"
+TEST_PATH_MSK = "../images/test/masks/"
+VALID_PATH_MSK = "../images/valid/masks/"
+X_SHIFT = -9
+Y_SHIFT = -18
 PATCH_SIZE = 256
 
 
@@ -26,7 +29,7 @@ def binarize_image(img):
 
 
 def save_image(img_array, path):
-    image = Image.fromarray(img_array).convert('LA')
+    image = Image.fromarray(img_array)
     image.save(path)
 
 
@@ -39,8 +42,8 @@ def create_mask(src_raster, dest_raster):
 def generate_patch(image, mask):
 
     # 8, 20 --> Offsets due to shift between mask and image from rasterization
-    rand_x = np.random.randint(-X_SHIFT, mask.shape[0] + X_SHIFT - PATCH_SIZE)
-    rand_y = np.random.randint(Y_SHIFT, mask.shape[1] - Y_SHIFT - PATCH_SIZE)
+    rand_x = np.random.randint(mask.shape[0] - X_SHIFT - PATCH_SIZE)
+    rand_y = np.random.randint(mask.shape[1] / 2 + Y_SHIFT - PATCH_SIZE)
     patch = image[rand_x:rand_x + PATCH_SIZE, rand_y:rand_y + PATCH_SIZE]
     patch_mask = mask[rand_x + X_SHIFT:rand_x + X_SHIFT + PATCH_SIZE, rand_y - Y_SHIFT:rand_y - Y_SHIFT + PATCH_SIZE]
 
@@ -53,22 +56,18 @@ def generate_dataset(img_path, mask_path):
 
     for i in range(600):
         patch, patch_mask = generate_patch(image, mask)
-        save_image(patch, TRAIN_PATH + str(i) + ".tif")
-        save_image(patch_mask, TRAIN_PATH + str(i) + "m.tif")
+        save_image(patch, TRAIN_PATH_IMG + str(i) + ".tif")
+        save_image(patch_mask, TRAIN_PATH_MSK + str(i) + "m.tif")
 
     for i in range(600, 800):
         patch, patch_mask = generate_patch(image, mask)
-        save_image(patch, TEST_PATH + str(i) + ".tif")
-        save_image(patch_mask, TEST_PATH + str(i) + "m.tif")
+        save_image(patch, TEST_PATH_IMG + str(i) + ".tif")
+        save_image(patch_mask, TEST_PATH_MSK + str(i) + "m.tif")
 
     for i in range(800, 1000):
         patch, patch_mask = generate_patch(image, mask)
-        save_image(patch, VALID_PATH + str(i) + ".tif")
-        save_image(patch_mask, VALID_PATH + str(i) + "m.tif")
-
-
-# TODO Data Augmentation
-# To be done after segmentation
+        save_image(patch, VALID_PATH_IMG + str(i) + ".tif")
+        save_image(patch_mask, VALID_PATH_MSK + str(i) + "m.tif")
 
 
 def main():

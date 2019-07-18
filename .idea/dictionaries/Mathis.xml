@@ -2,14 +2,21 @@
   <dictionary name="Mathis">
     <words>
       <w>binarize</w>
+      <w>coef</w>
       <w>conv</w>
+      <w>convt</w>
       <w>crossentropy</w>
+      <w>datagen</w>
       <w>dataset</w>
       <w>dest</w>
       <w>greyscale</w>
+      <w>logits</w>
+      <w>noalpha</w>
       <w>overfit</w>
+      <w>pred</w>
       <w>rasterization</w>
       <w>relu</w>
+      <w>resized</w>
       <w>samp</w>
       <w>softmax</w>
       <w>unet</w>

@@ -3,8 +3,34 @@ from keras.layers import *
 from keras.optimizers import *
 
 
-def unet_model():
+def weighted_cross_entropy(y, y_hat):
+    def convert_to_logits(y_pred):
+        y_pred = tf.clip_by_value(y_pred, tf.keras.backend.epsilon(), 1 - tf.keras.backend.epsilon())
 
+        return tf.log(y_pred / (1 - y_pred))
+
+    def loss(y_true, y_pred):
+        y_pred = convert_to_logits(y_pred)
+        loss_val = tf.nn.weighted_cross_entropy_with_logits(logits=y_pred, labels=y_true, pos_weight=0.5)
+
+        return tf.reduce_mean(loss_val)
+
+    return loss(y, y_hat)
+
+
+def dice_coef(y_true, y_pred):
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    intersection = K.sum(y_true_f * y_pred_f)
+    coef = (2. * intersection + K.epsilon()) / (K.sum(y_true_f) + K.sum(y_pred_f) + K.epsilon())
+    return coef
+
+
+def dice_coef_loss(y_true, y_pred):
+    return 1-dice_coef(y_true, y_pred)
+
+
+def unet_model():
     inputs = Input((256, 256, 3))
 
     conv1 = Conv2D(64, 3, padding='same', kernel_initializer='he_normal', activation='relu')(inputs)
@@ -49,14 +75,14 @@ def unet_model():
     merge4 = concatenate([conv2, up_conv4], axis=3)
     conv17 = Conv2D(64, 3, padding='same', kernel_initializer='he_normal', activation='relu')(merge4)
     conv18 = Conv2D(64, 3, padding='same', kernel_initializer='he_normal', activation='relu')(conv17)
-    conv18bis = Conv2D(2, 3, activation='relu', padding='same', kernel_initializer='he_normal')(conv18)
+    conv18bis = Conv2D(2, 3, padding='same', kernel_initializer='he_normal', activation='relu')(conv18)
     conv19 = Conv2D(1, 1, activation='sigmoid')(conv18bis)
 
     model = keras.models.Model(inputs=inputs, outputs=conv19)
 
-    ada = Adam()
+    ada = Adam(lr=3e-5)
 
-    model.compile(optimizer=ada, loss='binary_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=ada, loss=weighted_cross_entropy, metrics=[dice_coef])
 
     return model
 

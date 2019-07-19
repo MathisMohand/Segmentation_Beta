@@ -1,2 +1,2 @@
-__all__ = ['generator', 'unet']
+__all__ = ['train.py', 'unet']
 

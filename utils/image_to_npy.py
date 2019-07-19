@@ -1,4 +1,5 @@
 import numpy as np
+import os
 from PIL import Image
 
 
@@ -24,10 +25,10 @@ def image_to_npy(name, folder):
 
 def main():
     folders = ["train/", "test/", "valid/"]
-    sizes = [0, 600, 800, 1000]
+    lengths = [len(os.listdir(IMAGES_PATH + folder + IMG_PATH)) for folder in folders]
 
     for j in range(len(folders)):
-        for i in range(sizes[j], sizes[j+1]):
+        for i in range(lengths[j]):
             image_to_npy(str(i), folders[j] + IMG_PATH)
             image_to_npy(str(i) + "m", folders[j] + MSK_PATH)
 

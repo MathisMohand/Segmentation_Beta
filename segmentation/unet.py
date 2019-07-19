@@ -75,10 +75,10 @@ def unet_model():
     merge4 = concatenate([conv2, up_conv4], axis=3)
     conv17 = Conv2D(64, 3, padding='same', kernel_initializer='he_normal', activation='relu')(merge4)
     conv18 = Conv2D(64, 3, padding='same', kernel_initializer='he_normal', activation='relu')(conv17)
-    conv18bis = Conv2D(2, 3, padding='same', kernel_initializer='he_normal', activation='relu')(conv18)
-    conv19 = Conv2D(1, 1, activation='sigmoid')(conv18bis)
+    conv19 = Conv2D(2, 3, padding='same', kernel_initializer='he_normal', activation='relu')(conv18)
+    conv20 = Conv2D(1, 1, activation='sigmoid')(conv19)
 
-    model = keras.models.Model(inputs=inputs, outputs=conv19)
+    model = keras.models.Model(inputs=inputs, outputs=conv20)
 
     ada = Adam(lr=3e-5)
 

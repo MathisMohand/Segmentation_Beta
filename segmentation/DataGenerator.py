@@ -14,7 +14,7 @@ class DataGenerator(keras.utils.Sequence):
 
     def __load__(self, idf):
         image_path = self.path + 'images/' + idf
-        mask_path = self.path + "masks/" + idf[:-4] + "m.tif"
+        mask_path = self.path + 'masks/' + idf[:-4] + 'm.tif'
 
         image = Image.open(image_path)
         image.resize((self.image_size, self.image_size))
@@ -24,6 +24,18 @@ class DataGenerator(keras.utils.Sequence):
 
         image = np.array(image) / 255.
         mask = np.reshape(np.array(mask) / 255., (self.image_size, self.image_size, 1))
+
+        return image, mask
+
+    def __loadnpy__(self, idf):
+        image_path = self.path + 'images/' + idf
+        mask_path = self.path + 'masks/' + idf[:-4] + 'm.npy'
+
+        image = np.load(image_path).reshape((self.image_size, self.image_size, 3))
+        mask = np.load(mask_path).reshape((self.image_size, self.image_size, 1))
+
+        image = image / 255.
+        mask = mask / 255.
 
         return image, mask
 
@@ -37,7 +49,7 @@ class DataGenerator(keras.utils.Sequence):
         mask = []
 
         for idf in files_batch:
-            _image, _mask = self.__load__(idf)
+            _image, _mask = self.__loadnpy__(idf)
             image.append(_image)
             mask.append(_mask)
 

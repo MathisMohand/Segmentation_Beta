@@ -1,5 +1,6 @@
 from PIL import Image
 import numpy as np
+import os
 
 Image.MAX_IMAGE_PIXELS = 10000000000
 DENVER_PATH = "../denver_files/"
@@ -9,6 +10,8 @@ VALID_PATH_IMG = "../images/valid/images/"
 TRAIN_PATH_MSK = "../images/train/masks/"
 TEST_PATH_MSK = "../images/test/masks/"
 VALID_PATH_MSK = "../images/valid/masks/"
+DATA_PATH = "../data/"
+IMAGES_PATH = "../images/"
 PATCH_SIZE = 256
 
 
@@ -48,6 +51,20 @@ def generate_patch(image, mask):
     return patch, patch_mask
 
 
+def clean_dataset():
+    folders = [DATA_PATH, IMAGES_PATH]
+    sub_folders = ["train/", "test/", "valid/"]
+    img_mask = ["images/", "masks/"]
+
+    for folder in folders:
+        for sub in sub_folders:
+            for directory in img_mask:
+                for file in os.listdir(folder + sub + directory):
+                    os.remove(folder + sub + directory + file)
+
+    print("Data cleaned.")
+
+
 def generate_dataset(img_path, mask_path):
     image = load_image(img_path)
     mask = load_image(mask_path)
@@ -57,23 +74,28 @@ def generate_dataset(img_path, mask_path):
         save_image(patch, TRAIN_PATH_IMG + str(i) + ".tif")
         save_image(patch_mask, TRAIN_PATH_MSK + str(i) + "m.tif")
 
-    for i in range(8000, 9000):
+    for i in range(1000):
         patch, patch_mask = generate_patch(image, mask)
         save_image(patch, TEST_PATH_IMG + str(i) + ".tif")
         save_image(patch_mask, TEST_PATH_MSK + str(i) + "m.tif")
 
-    for i in range(9000, 10000):
+    for i in range(1000):
         patch, patch_mask = generate_patch(image, mask)
         save_image(patch, VALID_PATH_IMG + str(i) + ".tif")
         save_image(patch_mask, VALID_PATH_MSK + str(i) + "m.tif")
 
+    print("Data generated.")
+
 
 def main():
+    # Uncomment if a new mask needs to be created
     # path = DENVER_PATH + 'raster_noalpha.tif'
     # create_mask(path, DENVER_PATH + "mask.tif")
 
     image_path = DENVER_PATH + "Denver_noalpha.tif"
     mask_path = DENVER_PATH + "mask.tif"
+
+    clean_dataset()
     generate_dataset(image_path, mask_path)
 
 
